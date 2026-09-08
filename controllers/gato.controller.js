@@ -3,24 +3,36 @@ import supabase from "../supabase.js";
 
 
 export const obtenerGatos = async (req, res) => {
-  try {
-    const snapshot = await db.collection("gatos").orderBy("fecha", "desc").get();
 
-    const gatos = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    try {
 
-    res.status(200).json(gatos);
-  } catch (error) {
-    console.error("Error al obtener gatos:", error);
-    res.status(500).json({
-      mensaje: "Error al obtener los gatos.",
-      error: error.message,
-    });
-  }
+        const snapshot = await db
+            .collection("gatos")
+            .get();
+
+        const gatos = snapshot.docs.map((doc) => {
+
+            return {
+                id: doc.id,
+                ...doc.data()
+            };
+
+        });
+
+        res.status(200).json(gatos);
+
+    } catch (error) {
+
+        console.error("Error al obtener gatos:", error);
+
+        res.status(500).json({
+            mensaje: "Error al obtener los gatos.",
+            error: error.message
+        });
+
+    }
+
 };
-
 export const registrarGato = async (req, res) => {
   try {
     const { nombre, edad, peso, raza } = req.body || {};
