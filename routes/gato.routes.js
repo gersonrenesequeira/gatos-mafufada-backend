@@ -2,6 +2,8 @@ import express from "express";
 import multer from "multer";
 import { registrarGato } from "../controllers/gato.controller.js";
 
+import { registrarGato, obtenerGatos } from "../controllers/gato.controller.js";
+
 const router = express.Router();
 
 const upload = multer({
@@ -16,5 +18,7 @@ router.post(
   upload.single("imagen"),
   registrarGato
 );
+
+router.get("/gatos", obtenerGatos);
 
 export default router;
