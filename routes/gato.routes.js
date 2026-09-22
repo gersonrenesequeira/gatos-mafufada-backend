@@ -23,5 +23,6 @@ router.get("/gatos", obtenerGatos);
 
 // Actualizar gato
 router.put("/gato/:id", upload.single("imagen"), actualizarGato);
-
+import { eliminarGato } from "../controllers/gato.controller.js";
+router.delete("/gato/:id", eliminarGato);
 export default router;
