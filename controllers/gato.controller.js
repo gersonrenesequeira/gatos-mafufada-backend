@@ -22,6 +22,8 @@ export const obtenerGatos = async (req, res) => {
     });
   }
 };
+
+// Eliminar gato
 export const eliminarGato = async (req, res) => {
   try {
     const { id } = req.params;
@@ -35,11 +37,10 @@ export const eliminarGato = async (req, res) => {
       });
     }
 
-    // Eliminar la imagen de Supabase
+    // Eliminar la imagen de Supabase si existe
     const imagenUrl = doc.data().imagenUrl;
     if (imagenUrl) {
       try {
-        // Extraer la ruta del archivo desde la URL pública
         const ruta = imagenUrl.split("/imagenes_gatos/")[1];
         if (ruta) {
           await supabase.storage.from("imagenes_gatos").remove([ruta]);
@@ -63,6 +64,7 @@ export const eliminarGato = async (req, res) => {
     });
   }
 };
+
 // Registrar gato (incluye propietario)
 export const registrarGato = async (req, res) => {
   try {
