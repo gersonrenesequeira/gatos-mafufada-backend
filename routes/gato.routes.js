@@ -1,34 +1,27 @@
-import { Router } from "express";
-import { db } from "../config/firebase.js"; // Asegúrate de ajustar esta ruta según dónde importas la instancia de Firestore
+import express from "express";
+import multer from "multer";
+import {
+    registrarGato,
+    obtenerGatos,
+    actualizarGato
+} from "../controllers/gato.controller.js";
 
-const router = Router();
+const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-// 1. OBTENER TODOS LOS GATOS (GET /gato)
-router.get("/gato", async (req, res) => {
-  try {
-    const snapshot = await db.collection("gatos").get();
-
-    const gatos = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    return res.status(200).json(gatos);
-  } catch (error) {
-    console.error("Error al obtener los gatos:", error);
-    return res.status(500).json({ mensaje: "Error al obtener la lista de gatos" });
-  }
+// Ruta de prueba
+router.get("/", (req, res) => {
+    res.json({ mensaje: "Servidor de Gatos activo y funcionando correctamente." });
 });
 
-// 2. REGISTRAR UN GATO (POST /gato)
-// Aquí mantienes la ruta que ya tenías para crear el gato
-router.post("/gato", async (req, res) => {
-  try {
-    // Tu lógica de multer / Supabase / Firestore para registrar
-  } catch (error) {
-    console.error("Error al registrar el gato:", error);
-    return res.status(500).json({ mensaje: "Error al registrar el gato" });
-  }
-});
+// Registrar gato
+router.post("/gato", upload.single("imagen"), registrarGato);
+
+// Obtener todos los gatos (agregamos ambos endpoints para evitar descalces)
+router.get("/gato", obtenerGatos);
+router.get("/gatos", obtenerGatos);
+
+// Actualizar gato
+router.put("/gato/:id", upload.single("imagen"), actualizarGato);
 
 export default router;
