@@ -1,46 +1,37 @@
 import db from "../firebase.js";
 import supabase from "../supabase.js";
 
-
+// Obtener todos los gatos
 export const obtenerGatos = async (req, res) => {
+  try {
+    const snapshot = await db.collection("gatos").get();
 
-    try {
+    const gatos = snapshot.docs.map((doc) => {
+      return {
+        id: doc.id,
+        ...doc.data()
+      };
+    });
 
-        const snapshot = await db
-            .collection("gatos")
-            .get();
-
-        const gatos = snapshot.docs.map((doc) => {
-
-            return {
-                id: doc.id,
-                ...doc.data()
-            };
-
-        });
-
-        res.status(200).json(gatos);
-
-    } catch (error) {
-
-        console.error("Error al obtener gatos:", error);
-
-        res.status(500).json({
-            mensaje: "Error al obtener los gatos.",
-            error: error.message
-        });
-
-    }
-
+    res.status(200).json(gatos);
+  } catch (error) {
+    console.error("Error al obtener gatos:", error);
+    res.status(500).json({
+      mensaje: "Error al obtener los gatos.",
+      error: error.message
+    });
+  }
 };
+
+// Registrar gato (incluye propietario)
 export const registrarGato = async (req, res) => {
   try {
-    const { nombre, edad, peso, raza } = req.body || {};
+    const { nombre, propietario, edad, peso, raza } = req.body || {};
     const imagen = req.file;
 
-    if (!nombre || !edad || !peso || !raza) {
+    if (!nombre || !propietario || !edad || !peso || !raza) {
       return res.status(400).json({
-        mensaje: "Todos los campos son obligatorios: nombre, edad, peso y raza.",
+        mensaje: "Todos los campos son obligatorios: nombre, propietario, edad, peso y raza.",
       });
     }
 
@@ -51,17 +42,13 @@ export const registrarGato = async (req, res) => {
     }
 
     if (!imagen.mimetype.startsWith("image/")) {
- return res.status(400).json({
+      return res.status(400).json({
         mensaje: "El archivo debe ser una imagen.",
       });
     }
 
     const extension = imagen.originalname.split(".").pop().toLowerCase();
-
-    const nombreArchivo = `gato-${Date.now()}-${Math.random()
-      .toString(36)
-      .substring(2)}.${extension}`;
-
+    const nombreArchivo = `gato-${Date.now()}-${Math.random().toString(36).substring(2)}.${extension}`;
     const rutaImagen = `gatos/${nombreArchivo}`;
 
     const { error: uploadError } = await supabase.storage
@@ -73,7 +60,6 @@ export const registrarGato = async (req, res) => {
 
     if (uploadError) {
       console.error("Error al subir imagen:", uploadError);
-
       return res.status(500).json({
         mensaje: "Error al subir la imagen a Supabase.",
         error: uploadError.message,
@@ -88,6 +74,7 @@ export const registrarGato = async (req, res) => {
 
     const docRef = await db.collection("gatos").add({
       nombre,
+      propietario,
       edad: Number(edad),
       peso: Number(peso),
       raza,
@@ -96,32 +83,30 @@ export const registrarGato = async (req, res) => {
     });
 
     res.status(201).json({
-      mensaje: `¡Gato registrado con éxito! ID: ${docRef.id} | Nombre: ${nombre} | Edad: ${edad} años | Peso: ${peso} kg | Raza: ${raza}`,
+      mensaje: `¡Gato registrado con éxito! ID: ${docRef.id} | Nombre: ${nombre} | Propietario: ${propietario}`,
       id: docRef.id,
       imagenUrl,
     });
 
   } catch (error) {
-   console.error("Error:", error);
-
+    console.error("Error:", error);
     res.status(500).json({
       mensaje: "Error al registrar el gato.",
       error: error.message,
     });
-    
   }
-  
 };
 
+// Actualizar gato
 export const actualizarGato = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, edad, peso, raza } = req.body || {};
+    const { nombre, propietario, edad, peso, raza } = req.body || {};
     const imagen = req.file || (Array.isArray(req.files) ? req.files[0] : req.files);
 
-    if (!nombre || !edad || !peso || !raza) {
+    if (!nombre || !propietario || !edad || !peso || !raza) {
       return res.status(400).json({
-        mensaje: "Todos los campos son obligatorios: nombre, edad, peso y raza.",
+        mensaje: "Todos los campos son obligatorios: nombre, propietario, edad, peso y raza.",
       });
     }
 
@@ -144,9 +129,7 @@ export const actualizarGato = async (req, res) => {
       }
 
       const extension = imagen.originalname.split(".").pop().toLowerCase();
-      const nombreArchivo = `gato-${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(2)}.${extension}`;
+      const nombreArchivo = `gato-${Date.now()}-${Math.random().toString(36).substring(2)}.${extension}`;
       const rutaImagen = `gatos/${nombreArchivo}`;
 
       const { error: uploadError } = await supabase.storage
@@ -173,6 +156,7 @@ export const actualizarGato = async (req, res) => {
 
     await docRef.update({
       nombre,
+      propietario,
       edad: Number(edad),
       peso: Number(peso),
       raza,
@@ -180,7 +164,7 @@ export const actualizarGato = async (req, res) => {
     });
 
     res.status(200).json({
-      mensaje: `Gato actualizado con éxito! ID: ${id} | Nombre: ${nombre}`,
+      mensaje: `¡Gato actualizado con éxito! ID: ${id} | Nombre: ${nombre}`,
       imagenUrl,
     });
   } catch (error) {
@@ -191,5 +175,3 @@ export const actualizarGato = async (req, res) => {
     });
   }
 };
-
-
