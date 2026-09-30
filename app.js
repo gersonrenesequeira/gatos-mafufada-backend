@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";  //Para que el frontend pueda llamar
 import gatoRoutes from "./routes/gato.routes.js";
+import climaRoutes from "./routes/clima.routes.js";
 const app = express();
 
 // Middlewares
@@ -9,7 +10,7 @@ app.use(express.json());
 
 // Rutas
 app.use(gatoRoutes);
-
+app.use(climaRoutes);
 // 404
 app.use((req, res) => {
   res.status(404).json({ mensaje: "Ruta no registrada." });
