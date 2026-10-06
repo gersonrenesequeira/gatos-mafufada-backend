@@ -4,7 +4,8 @@ import {
   registrarGato,
   obtenerGatos,
   actualizarGato,
-  eliminarGato
+  eliminarGato,
+  buscarGatos
 } from "../controllers/gato.controller.js";
 
 const router = express.Router();
@@ -14,6 +15,9 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.get("/", (req, res) => {
   res.json({ mensaje: "Servidor de Gatos activo y funcionando correctamente." });
 });
+
+// Buscar gatos (debe ir antes de rutas con parametros dinámicos)
+router.get("/gatos/buscar", buscarGatos);
 
 // Registrar gato
 router.post("/gato", upload.single("imagen"), registrarGato);
