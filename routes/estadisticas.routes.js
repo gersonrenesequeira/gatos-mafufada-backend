@@ -1,6 +1,5 @@
 import express from "express";
 import { obtenerEstadisticas } from "../controllers/estadisticas.controller.js";
-import { exportarEstadisticasExcel } from "../controllers/exportacion.controller.js";
 import { capturarInfoSolicitud } from "../middlewares/auditoria.js";
 import { exportarEstadisticasExcel, exportarEstadisticasPDF } from "../controllers/exportacion.controller.js";
 
