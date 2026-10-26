@@ -1,5 +1,9 @@
 import express from "express";
 import multer from "multer";
+import { exportarGatosLista, exportarGatosJSON, exportarGatosSQL } from "../controllers/exportacion.controller.js";
+
+
+
 
 import {
   registrarGato,
@@ -31,6 +35,11 @@ router.post("/gato", upload.single("imagen"), registrarGato);
 // Obtener todos los gatos
 router.get("/gato", obtenerGatos);
 router.get("/gatos", obtenerGatos);
+
+// Rutas
+router.get("/lista", exportarGatosLista);
+router.get("/json", exportarGatosJSON);
+router.get("/sql", exportarGatosSQL);
 
 // Actualizar gato
 router.put("/gato/:id", upload.single("imagen"), actualizarGato);
