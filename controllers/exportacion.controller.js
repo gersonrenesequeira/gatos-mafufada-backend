@@ -1,10 +1,8 @@
 import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
 import { calcularEstadisticas } from "./estadisticas.controller.js";
-import { db } from "../config/firebase.js"; // Ajusta la ruta correcta según la estructura de tu proyecto
-import ExcelJS from "exceljs";
-import PDFDocument from "pdfkit";
-import { calcularEstadisticas } from "./estadisticas.controller.js";
+import { db } from "../firebase.js";
+
 // ======================================================
 // EXPORTAR ESTADÍSTICAS A EXCEL
 // ======================================================
@@ -532,11 +530,9 @@ export const exportarGatosJSON = async (req, res) => {
       ...doc.data(),
     }));
 
-    // JSON indentado para que sea fácil de leer y copiar
     const jsonFormateado = JSON.stringify(gatos, null, 2);
 
     res.setHeader("Content-Type", "application/json; charset=utf-8");
-    // "inline" hace que en el navegador se vea el texto (fácil de seleccionar todo y copiar)
     res.setHeader("Content-Disposition", "inline; filename=\"gatos.json\"");
     res.send(jsonFormateado);
   } catch (error) {
@@ -560,12 +556,11 @@ export const exportarGatosSQL = async (req, res) => {
     const escaparSQL = (valor) => {
       if (valor === null || valor === undefined) return "NULL";
       if (typeof valor === "number") return valor;
-      // Escapar comillas simples
       return `'${String(valor).replace(/'/g, "''")}'`;
     };
 
     let sql = `-- Script de inserción de gatos\n`;
-   sql += `-- Generado: ${new Date().toLocaleString("es-ES")}\n`;
+    sql += `-- Generado: ${new Date().toLocaleString("es-ES")}\n`;
     sql += `-- Total registros: ${gatos.length}\n\n`;
 
     sql += `CREATE TABLE IF NOT EXISTS gatos (\n`;
