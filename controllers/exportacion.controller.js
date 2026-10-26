@@ -1,7 +1,10 @@
 import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
 import { calcularEstadisticas } from "./estadisticas.controller.js";
-
+import { db } from "../config/firebase.js"; // Ajusta la ruta correcta según la estructura de tu proyecto
+import ExcelJS from "exceljs";
+import PDFDocument from "pdfkit";
+import { calcularEstadisticas } from "./estadisticas.controller.js";
 // ======================================================
 // EXPORTAR ESTADÍSTICAS A EXCEL
 // ======================================================
