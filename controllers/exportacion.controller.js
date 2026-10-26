@@ -1,7 +1,7 @@
 import ExcelJS from "exceljs";
 import PDFDocument from "pdfkit";
 import { calcularEstadisticas } from "./estadisticas.controller.js";
-import { db } from "../firebase.js";
+import db from "../firebase.js";
 
 // ======================================================
 // EXPORTAR ESTADÍSTICAS A EXCEL
